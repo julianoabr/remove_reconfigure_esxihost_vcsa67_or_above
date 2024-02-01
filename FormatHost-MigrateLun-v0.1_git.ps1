@@ -479,13 +479,15 @@ $hostProfileStd = Get-VMHostProfile -Name "Host_Profile_Standard_Cluster01" -Ver
 
 Invoke-VMHostProfile -Profile $hostProfileStd -Entity $hostObj -AssociateOnly -Confirm:$true -Verbose
 
-#Apply Host Profile
+Pause-PSScript
 
-#Future release
+#Check Host Profile Compliance
 
-#disable IPV6 only on vmkernel adapters
+Test-VMHostProfileCompliance -VMHost $hostObj -Verbose
 
 Pause-PSScript
+
+#disable IPV6 only on vmkernel adapters
 
 Get-VMHost -Name $esxiHostName | Get-VMHostNetworkAdapter | Where-Object -FilterScript {$PSItem.PortGroupName -eq 'Management Network'} | Set-VMHostNetworkAdapter -IPv6Enabled $false -Confirm:$false -Verbose
 
@@ -568,7 +570,7 @@ Set-VMHost -VMHost $hostObj -Profile $null -Confirm:$true -Verbose
 
 #Disable Maintenance Mode
 
-Set-VMHost -VMHost $hostObj -State Connected -Confirm:$true -Verbose
+Set-VMHost -VMHost $hostObj -State Connected -Confirm:$true -RunAsync -Verbose
 
 Write-Host "End of Script" -ForegroundColor White -BackgroundColor DarkYellow
 
