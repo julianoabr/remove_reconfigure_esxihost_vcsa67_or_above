@@ -220,15 +220,15 @@ Write-Host "`n"
 
 $esxiHostList = @()
 
-$esxiHostList = Get-VMHost | Select-Object -Property Name | Sort-Object
+$esxiHostList = Get-VMHost | Select-Object -ExpandProperty Name | Sort-Object
 
 $iterator = 1
 
-$esxiHostList | ForEach-Object {Write-Host $iterator ":" $PSItem.Name; $iterator ++}
+$esxiHostList | ForEach-Object {Write-Host $iterator ":" $_ ; $iterator ++}
 
 $hostNumber = Read-Host "Type the number of ESXi Host to put into Maintenance Mode." -Verbose
 
-$selectedHost = $esxiHostList[$hostNumber - 1].Name
+$selectedHost = $esxiHostList[$hostNumber - 1]
 
 Write-Host "You have selected ESXi Host:" -NoNewline
 
