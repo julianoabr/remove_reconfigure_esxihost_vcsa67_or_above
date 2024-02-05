@@ -248,9 +248,12 @@ Pause-PSScript
 
 #CREATE VARIABLES
 
-[System.String]$noteReason = "Change LUN of Boot - Reconfigure Host"
+[System.String]$noteReason = "Change Boot Lun - UCS B200M4 - C2092768"
 
 $hostObj = Get-VMHost -Name $esxiHostName -Verbose
+
+#Get Cluster where host is
+$esxiClusterName = ($hostObj | VMware.VimAutomation.Core\Get-Cluster).Name
 
 #Place Selected host into Maintenance Mode
 
@@ -495,10 +498,9 @@ Get-VMHost -Name $esxiHostName | Get-VMHostNetworkAdapter | Where-Object -Filter
 
 Get-VMHost -Name $esxiHostName | Get-VMHostNetworkAdapter | Where-Object -FilterScript {$PSItem.PortGroupName -eq 'NAS'} | Set-VMHostNetworkAdapter -IPv6Enabled $false -Confirm:$false -Verbose
 
+#Move ESXi Host to Source Cluster
 
-#Move ESXi Host to YOUR_CLUSTER Cluster
-
-$destinationClusterObj = VMware.VimAutomation.Core\Get-Cluster -Name 'YOUR_CLUSTER'
+$destinationClusterObj =  VMware.VimAutomation.Core\Get-Cluster -Name $esxiClusterName -Verbose
 
 Move-VMHost -VMHost $hostObj -Destination $destinationClusterObj -Confirm:$true -Verbose
 
